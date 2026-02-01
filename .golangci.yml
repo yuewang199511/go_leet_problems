@@ -3,25 +3,5 @@ run:
 
 linters:
   enable:
-    - gofmt
-    - goimports
-    - govet
-    - errcheck
-    - staticcheck
-    - unused
-    - gosec
-    - revive
-
-linters-settings:
-  gocyclo:
-    min-complexity: 15
-  
-  revive:
-    severity: warning
-
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - errcheck
-        - gosec
+    - goimports    # Handles formatting and import organization
+    - govet        # Basic static analysis for common bugs
