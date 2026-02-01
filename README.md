@@ -31,21 +31,6 @@ All workflows trigger on pushes to `main`/`develop` and pull requests to `main`.
 - [**Workflow Architecture**](docs/workflow-architecture.md) - How workflows are organized and why
 - [**CI/CD Concepts**](docs/cicd-concepts.md) - GitHub Actions fundamentals and best practices
 
-
-
 ## Local Testing
 
-To run tests locally for a specific problem:
-
-```bash
-cd "Problem Directory"
-go test -v ./...
-```
-
-To run tests with race detection:
-
-```bash
-go test -race -v ./...
-```
-
-For complete CI/CD setup instructions and concepts, see the [CI/CD documentation](docs/).
+For running tests and quality checks locally, see [**Running Checks Locally**](docs/configuration-manual.md#running-checks-locally) in the Configuration Manual.
