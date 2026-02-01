@@ -7,7 +7,7 @@ func searchMatrix(matrix [][]int, target int) bool {
 	if len(matrix) == 0 || len(matrix[0]) == 0 {
 		return false
 	}
-
+	// initialization to the whole matrix
 	i := 0
 	j := 0
 	k := len(matrix) - 1
@@ -16,12 +16,13 @@ func searchMatrix(matrix [][]int, target int) bool {
 	t := target
 
 	// Check if target is outside the matrix range
+	// initialization according to the invariant
 	if M[i][j] > t || M[k][l] < t {
 		return false
 	}
 
 	// Shrink the search area by eliminating rows/columns
-	for i < k && j < l {
+	for i < k && j < l { // every deleted row or column will not affect the invariant, why?
 		if M[i][j] > t || M[i][l] < t {
 			i++
 		} else if M[i][j] > t || M[k][j] < t {
@@ -31,11 +32,14 @@ func searchMatrix(matrix [][]int, target int) bool {
 		} else if M[i][l] > t || M[k][l] < t {
 			l--
 		} else if M[i][j] == t || M[i][l] == t || M[k][j] == t || M[k][l] == t {
-			return true
+			return true // there is corner case that the above if statements miss the target except this, how?
 		}
 	}
 
+	//The above loop ends with O(n +m) time, why?
+
 	// Search in remaining row or column
+	// The target possibly lies in either the remaining row or column, but we still need to check, O(n) time
 	if i == k {
 		// Search remaining row
 		for col := j; col <= l; col++ {
