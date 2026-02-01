@@ -30,19 +30,6 @@ jobs:
     - name: Download dependencies
       run: find . -name "go.mod" -execdir go mod download \;
     
-    - name: Check formatting
-      run: |
-        find . -name "go.mod" -execdir sh -c '
-          unformatted=$(gofmt -l .)
-          if [ -n "$unformatted" ]; then
-            echo "Files need formatting: $unformatted"
-            exit 1
-          fi
-        ' \;
-    
-    - name: Run go vet
-      run: find . -name "go.mod" -execdir go vet ./... \;
-    
     - name: Install and run golangci-lint
       run: |
         curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.60.1

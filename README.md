@@ -18,9 +18,9 @@ This repository uses GitHub Actions for automated testing with a **modular workf
 - Coverage reporting
 
 ### **✨ [code-quality.yml](.github/workflows/code-quality.yml)** - Code Standards  
-- Code formatting checks (`gofmt`)
-- Static analysis (`go vet`)
-- Comprehensive linting (`golangci-lint`)
+- Comprehensive linting via `golangci-lint` (includes formatting, static analysis, style checks)
+- Configured via [`.golangci.yml`](.golangci.yml) with 8 essential linters
+- Single unified tool for all code quality checks
 
 ### **🔒 [security.yml](.github/workflows/security.yml)** - Security
 - Vulnerability scanning (`govulncheck`)
@@ -56,6 +56,21 @@ To maintain consistency across all workflows, set up a repository variable:
 3. All workflows reference this via `${{ vars.GO_VERSION }}`
 
 This ensures **single source of truth** for Go version - change once in repository settings, applies everywhere automatically.
+
+### Code Quality Configuration
+The [`.golangci.yml`](.golangci.yml) file configures which linters run and their behavior:
+
+- **Essential linters**: `gofmt`, `goimports`, `govet`, `errcheck`, `staticcheck`, `unused`, `gosec`, `revive`
+- **Algorithm-friendly**: Allows reasonable complexity for coding problems
+- **Test exceptions**: Relaxed rules for test files
+- **Unified reporting**: All code quality issues in one place
+
+Modify `.golangci.yml` to customize which checks run - no workflow changes needed!
+
+**Configuration Reference:**
+- [golangci-lint Configuration Guide](https://golangci-lint.run/usage/configuration/)
+- [Available Linters](https://golangci-lint.run/usage/linters/)
+- [Example configurations](https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml)
 
 
 
