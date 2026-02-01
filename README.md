@@ -8,18 +8,54 @@ Solutions may not be optimal, but they serve as a starting point for further imp
 
 # CI/CD setup
 
-This repository uses GitHub Actions for automated testing. The workflow:
+This repository uses GitHub Actions for automated testing with a **modular workflow architecture**. Instead of putting everything in one large workflow file, we separate concerns into multiple focused workflows:
 
-- **Triggers**: Runs on pushes to `main`/`develop` branches and pull requests to `main`
-- **Go versions**: Tests against Go 1.21, 1.22, and 1.23 for compatibility
-- **Test steps**:
-  1. Downloads dependencies for all Go modules in the repository
-  2. Runs tests with `go test -v ./...`
-  3. Runs tests with race detector enabled
-  4. Verifies code builds successfully
+## Workflow Architecture
 
+### **🧪 [test.yml](.github/workflows/test.yml)** - Testing
+- Unit tests with `go test -v`
+- Race condition detection with `-race` flag
+- Coverage reporting
 
-Each problem directory with a `go.mod` file is automatically discovered and tested independently.
+### **✨ [code-quality.yml](.github/workflows/code-quality.yml)** - Code Standards  
+- Code formatting checks (`gofmt`)
+- Static analysis (`go vet`)
+- Comprehensive linting (`golangci-lint`)
+
+### **🔒 [security.yml](.github/workflows/security.yml)** - Security
+- Vulnerability scanning (`govulncheck`)
+- Dependency security analysis
+
+### **🏗️ [build.yml](.github/workflows/build.yml)** - Cross-compilation
+- Linux x64, Windows x64, macOS x64/ARM64 builds
+- Ensures code compiles across platforms
+
+## Benefits of Separation
+
+**🎯 Single Responsibility**: Each workflow has one clear purpose  
+**⚡ Parallel Execution**: All workflows run simultaneously for faster feedback  
+**🔧 Easy Maintenance**: Modify one aspect without affecting others  
+**📊 Clear GitHub UI**: Each appears as separate status check  
+**👥 Team Scalability**: Different team members can own different workflows  
+
+## Triggers
+All workflows trigger on:
+- **Pushes** to `main`/`develop` branches  
+- **Pull requests** targeting `main` branch
+
+## Auto-discovery
+Each workflow automatically finds and processes all directories containing `go.mod` files, making the setup scalable for multi-module repositories.
+
+## Configuration
+
+### Go Version Management
+To maintain consistency across all workflows, set up a repository variable:
+
+1. Go to **Repository Settings** → **Secrets and variables** → **Actions** → **Variables** tab
+2. Create new variable: `GO_VERSION` with value `1.25.6` (or your desired version)
+3. All workflows reference this via `${{ vars.GO_VERSION }}`
+
+This ensures **single source of truth** for Go version - change once in repository settings, applies everywhere automatically.
 
 
 
@@ -51,8 +87,45 @@ Please also check [text](https://docs.github.com/en/actions/tutorials/build-and-
 
 **Go Commands:**
 - **`go test -v`**: Runs tests with verbose output showing individual test names
-- **`go build`**: Compiles Go source code into executables (compilation verification)
+- **`go build`**: Compiles Go source code into executables (compilation verification)  
 - **`find . -name "go.mod" -execdir`**: Finds all Go modules and runs commands in their directories
+
+## Best Practice: Workflow Separation
+
+### ❌ **Anti-pattern: Monolithic Workflow**
+```yaml
+# DON'T: Everything in one job
+jobs:
+  everything:
+    steps:
+      - name: Test
+      - name: Lint  
+      - name: Security scan
+      - name: Build
+      - name: Deploy
+```
+
+### ✅ **Best Practice: Modular Workflows**
+```yaml
+# DO: Separate files for different concerns
+.github/workflows/
+├── test.yml          # Testing only
+├── code-quality.yml  # Linting & formatting
+├── security.yml      # Vulnerability scanning  
+├── build.yml         # Cross-compilation
+└── deploy.yml        # Deployment (if needed)
+```
+
+### **Why Separation Matters:**
+
+1. **🚀 Faster Feedback**: Get quality issues immediately without waiting for all tests
+2. **🔄 Independent Scaling**: Add more test scenarios without affecting code quality checks
+3. **🎯 Focused Debugging**: When a workflow fails, you know exactly which aspect broke
+4. **👥 Team Ownership**: Different team members can maintain different workflows
+5. **📊 Better Metrics**: Track success rates for testing vs. code quality vs. security separately
+6. **🔧 Selective Execution**: Disable specific checks (e.g., security scanning) without affecting core testing
+
+This modular approach follows the **Single Responsibility Principle** in CI/CD design, making your development process more maintainable and scalable.
 
 ## Local testing
 

@@ -1,4 +1,4 @@
-name: Test
+name: Build
 
 on:
   push:
@@ -7,36 +7,20 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  build:
+    name: Cross-platform Build
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Go ${{ vars.GO_VERSION }}
+    - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version: ${{ vars.GO_VERSION }}
     
-    - name: Cache Go modules
-      uses: actions/cache@v4
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ vars.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-${{ vars.GO_VERSION }}-
-    
     - name: Download dependencies
-      run: |
-        find . -name "go.mod" -execdir go mod download \;
-    
-    - name: Run tests
-      run: |
-        find . -name "go.mod" -execdir go test -v ./... \;
-    
-    - name: Run tests with race detector
-      run: |
-        find . -name "go.mod" -execdir go test -race -v ./... \;
+      run: find . -name "go.mod" -execdir go mod download \;
     
     - name: Build for multiple platforms
       run: |
